@@ -1,46 +1,47 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class AppLocalizations {
+  final Locale locale;
+
+  AppLocalizations(this.locale);
+
   static AppLocalizations of(BuildContext context) {
     return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
-  // Deutsche Übersetzungen
+  // DELEGATE muss existieren!
+  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+
+  // Deutsch - Hauptsprache
   String get appTitle => 'Lotto World Pro';
-  String get yourWinningNumbers => 'Deine Gewinnzahlen';
-  String get pressSpinToStart => 'Drücke Spin zum Starten';
-  String get spin => 'Spin';
-  String get save => 'Speichern';
-  String get tips => 'Tipps';
-  String get cost => 'Kosten';
-  String get statistics => 'Statistiken';
+  String get yourWinningNumbers => 'Deine Glückszahlen';
+  String get pressSpinToStart => 'Drücke SPIN zum Starten';
+  String get spin => 'SPIN';
+  String get save => 'SPEICHERN';
+  String get statistics => 'Statistik';
   String get tipAnalysis => 'Tipp Analyse';
   String get winSimulation => 'Gewinn Simulation';
+  String get tips => 'Tipps';
+  String get cost => 'Kosten';
   String get quickTips => 'Quick-Tipps';
   String get megaTips => 'Mega-Tipps';
   String get myWinningTips => 'Meine Gewinn-Tipps';
   String get noTipsYet => 'Noch keine Tipps';
-  String get generateLuckyNumbers => 'Generiere Glückszahlen';
+  String get generateLuckyNumbers => 'Generiere deine Glückszahlen!';
   String get tipSaved => 'Tipp gespeichert!';
   String get allTipsDeleted => 'Alle Tipps gelöscht!';
   String get tipsGenerated => 'Tipps generiert!';
-  String get createTipsFirst => 'Erstelle zuerst Tipps!';
+  String get createTipsFirst => 'Bitte erstelle zuerst Tipps!';
+  String get totalTips => 'Gesamte Tipps';
   String get light => 'Hell';
   String get dark => 'Dunkel';
   String get system => 'System';
-  String get totalTips => 'Gesamt Tipps';
-  String get currentTip => 'Aktueller Tipp';
-  String get noTip => 'Kein Tipp';
-  String get generateTip => 'Tipp generieren';
-  String get saveTip => 'Tipp speichern';
-  String get noSavedTips => 'Keine gespeicherten Tipps';
-  String get created => 'Erstellt';
-  String get deleteAll => 'Alle löschen';
 }
 
-// DELEGATE KLASSE - DIESE FEHLTE!
-class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
-  const AppLocalizationsDelegate();
+// DELEGATE KLASSE MUSS VORHANDEN SEIN!
+class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+  const _AppLocalizationsDelegate();
 
   @override
   bool isSupported(Locale locale) {
@@ -48,10 +49,10 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   }
 
   @override
-  Future<AppLocalizations> load(Locale locale) async {
-    return AppLocalizations();
+  Future<AppLocalizations> load(Locale locale) {
+    return SynchronousFuture<AppLocalizations>(AppLocalizations(locale));
   }
 
   @override
-  bool shouldReload(AppLocalizationsDelegate old) => false;
+  bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
