@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 class AppLocalizations {
   static AppLocalizations of(BuildContext context) {
-    return AppLocalizations();
+    return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
+  // Deutsche Übersetzungen
   String get appTitle => 'Lotto World Pro';
   String get yourWinningNumbers => 'Deine Gewinnzahlen';
   String get pressSpinToStart => 'Drücke Spin zum Starten';
@@ -27,4 +28,30 @@ class AppLocalizations {
   String get light => 'Hell';
   String get dark => 'Dunkel';
   String get system => 'System';
+  String get totalTips => 'Gesamt Tipps';
+  String get currentTip => 'Aktueller Tipp';
+  String get noTip => 'Kein Tipp';
+  String get generateTip => 'Tipp generieren';
+  String get saveTip => 'Tipp speichern';
+  String get noSavedTips => 'Keine gespeicherten Tipps';
+  String get created => 'Erstellt';
+  String get deleteAll => 'Alle löschen';
+}
+
+// DELEGATE KLASSE - DIESE FEHLTE!
+class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+  const AppLocalizationsDelegate();
+
+  @override
+  bool isSupported(Locale locale) {
+    return ['de', 'en', 'tr'].contains(locale.languageCode);
+  }
+
+  @override
+  Future<AppLocalizations> load(Locale locale) async {
+    return AppLocalizations();
+  }
+
+  @override
+  bool shouldReload(AppLocalizationsDelegate old) => false;
 }

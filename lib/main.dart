@@ -36,7 +36,7 @@ class _SmartLottoAppState extends State<SmartLottoApp> {
       darkTheme: ThemeData.dark(),
       locale: _locale,
       localizationsDelegates: const [
-        AppLocalizations.delegate,
+        AppLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
