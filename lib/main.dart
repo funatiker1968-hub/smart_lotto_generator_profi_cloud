@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -7,6 +6,7 @@ void main() async {
 }
 
 class SmartLottoApp extends StatefulWidget {
+  const SmartLottoApp({super.key});
   @override
   State<SmartLottoApp> createState() => _SmartLottoAppState();
 }
