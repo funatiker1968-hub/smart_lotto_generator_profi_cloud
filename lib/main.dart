@@ -1,79 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'lotto_service.dart';
-import 'stats_screen.dart';
-import 'tip_analysis_screen.dart';
-import 'l10n/app_localizations.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  
-  // Fehlerbehandlung für App-Starts
-  runApp(SmartLottoApp());
+void main() {
+  runApp(MyApp());
 }
 
-class SmartLottoApp extends StatefulWidget {
-  const SmartLottoApp({super.key});
-
-  @override
-  State<SmartLottoApp> createState() => _SmartLottoAppState();
-}
-
-class _SmartLottoAppState extends State<SmartLottoApp> {
-  ThemeMode _mode = ThemeMode.system;
-  Locale _locale = const Locale('de');
-
-  void _changeLanguage(Locale newLocale) {
-    setState(() {
-      _locale = newLocale;
-    });
-  }
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Lotto World Pro',
-      themeMode: _mode,
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
-      locale: _locale,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('de'),
-        Locale('en'),
-        Locale('tr'),
-      ],
-      home: LottoHomeScreen(
-        onThemeChanged: (mode) {
-          setState(() {
-            _mode = mode;
-          });
-        },
-        onLanguageChanged: _changeLanguage,
-        currentLocale: _locale,
-      ),
+      theme: ThemeData.dark(),
+      home: LottoHomeScreen(),
     );
   }
 }
 
 class LottoHomeScreen extends StatefulWidget {
-  final Function(ThemeMode) onThemeChanged;
-  final Function(Locale) onLanguageChanged;
-  final Locale currentLocale;
-
-  const LottoHomeScreen({
-    super.key,
-    required this.onThemeChanged,
-    required this.onLanguageChanged,
-    required this.currentLocale,
-  });
+  const LottoHomeScreen({super.key});
 
   @override
   State<LottoHomeScreen> createState() => _LottoHomeScreenState();
@@ -83,33 +29,11 @@ class _LottoHomeScreenState extends State<LottoHomeScreen> {
   List<int> _currentNumbers = [];
   final List<List<int>> _myTips = [];
   double _totalCost = 0.0;
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _initializeApp();
-  }
-
-  void _initializeApp() async {
-    try {
-      // Sicherer Start ohne komplexe Initialisierung
-      await Future.delayed(const Duration(milliseconds: 100));
-      setState(() {
-        _isLoading = false;
-      });
-    } catch (e) {
-      // Falls Fehler auftreten, trotzdem UI anzeigen
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
 
   void _generateNumbers() {
     setState(() {
       _currentNumbers = LottoService.generateLottoNumbers();
-      _totalCost = LottoService.calculateCost(_myTips.length, 1.50);
+      _totalCost = _myTips.length * 1.50;
     });
   }
 
@@ -117,7 +41,7 @@ class _LottoHomeScreenState extends State<LottoHomeScreen> {
     if (_currentNumbers.isNotEmpty) {
       setState(() {
         _myTips.add(List.from(_currentNumbers));
-        _totalCost = LottoService.calculateCost(_myTips.length, 1.50);
+        _totalCost = _myTips.length * 1.50;
       });
     }
   }
@@ -133,7 +57,7 @@ class _LottoHomeScreenState extends State<LottoHomeScreen> {
     setState(() {
       final newTips = LottoService.generateMultipleTips(count);
       _myTips.addAll(newTips);
-      _totalCost = LottoService.calculateCost(_myTips.length, 1.50);
+      _totalCost = _myTips.length * 1.50;
     });
   }
 
@@ -171,26 +95,10 @@ class _LottoHomeScreenState extends State<LottoHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return Scaffold(
-        backgroundColor: const Color(0xFF1A1A1A),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircularProgressIndicator(color: Color(0xFFFFD700)),
-              SizedBox(height: 20),
-              Text('Lade Lotto App...', style: TextStyle(color: Colors.white)),
-            ],
-          ),
-        ),
-      );
-    }
-
     return Scaffold(
       backgroundColor: const Color(0xFF1A1A1A),
       appBar: AppBar(
-        title: Text('Lotto World Pro', style: TextStyle(color: Color(0xFFFFD700))),
+        title: const Text('Lotto World Pro', style: TextStyle(color: Color(0xFFFFD700))),
         backgroundColor: const Color(0xFF2D2D2D),
       ),
       body: Padding(
@@ -203,11 +111,12 @@ class _LottoHomeScreenState extends State<LottoHomeScreen> {
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
                   children: [
-                    Text('🎲 Deine Glückszahlen 🎲', style: TextStyle(color: Color(0xFFFFD700))),
-                    SizedBox(height: 20),
+                    const Text('🎲 Deine Glückszahlen 🎲', 
+                             style: TextStyle(color: Color(0xFFFFD700), fontSize: 18)),
+                    const SizedBox(height: 20),
                     _currentNumbers.isEmpty
                         ? Column(
-                            children: [
+                            children: const [
                               Icon(Icons.casino_outlined, size: 50, color: Colors.grey),
                               SizedBox(height: 10),
                               Text('Drücke SPIN zum Starten', style: TextStyle(color: Colors.grey)),
@@ -219,19 +128,19 @@ class _LottoHomeScreenState extends State<LottoHomeScreen> {
                                 .map((number) => _buildLottoBall(number))
                                 .toList(),
                           ),
-                    SizedBox(height: 25),
+                    const SizedBox(height: 25),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         ElevatedButton(
                           onPressed: _generateNumbers,
-                          child: Text('SPIN'),
-                          style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFC41E3A)),
+                          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC41E3A)),
+                          child: const Text('SPIN', style: TextStyle(color: Colors.white)),
                         ),
                         ElevatedButton(
                           onPressed: _currentNumbers.isEmpty ? null : _saveTip,
-                          child: Text('SPEICHERN'),
-                          style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF228B22)),
+                          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF228B22)),
+                          child: const Text('SPEICHERN', style: TextStyle(color: Colors.white)),
                         ),
                       ],
                     ),
@@ -239,16 +148,77 @@ class _LottoHomeScreenState extends State<LottoHomeScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
+            
+            // Statistik Karte
+            Card(
+              color: const Color(0xFF2D2D2D),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Column(
+                      children: [
+                        const Text('🎫 Tipps', style: TextStyle(color: Colors.grey)),
+                        Text('${_myTips.length}', 
+                             style: const TextStyle(fontSize: 22, color: Color(0xFFFFD700), fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        const Text('💰 Kosten', style: TextStyle(color: Colors.grey)),
+                        Text('${_totalCost.toStringAsFixed(2)} €', 
+                             style: const TextStyle(fontSize: 22, color: Color(0xFFFFD700), fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            
+            const SizedBox(height: 20),
+            
+            // Quick Buttons
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => _generateMultipleTips(5),
+                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFF8C00)),
+                    child: const Text('5 Quick-Tipps', style: TextStyle(color: Colors.white)),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => _generateMultipleTips(10),
+                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFDC143C)),
+                    child: const Text('10 Mega-Tipps', style: TextStyle(color: Colors.white)),
+                  ),
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: 20),
+            const Divider(color: Colors.grey),
+            const SizedBox(height: 10),
+            
+            const Text('💎 Meine Gewinn-Tipps 💎', 
+                     style: TextStyle(color: Color(0xFFFFD700), fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            
             Expanded(
               child: _myTips.isEmpty
-                  ? Center(
+                  ? const Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.celebration_outlined, size: 60, color: Colors.grey),
                           SizedBox(height: 15),
                           Text('Noch keine Tipps', style: TextStyle(fontSize: 18, color: Colors.grey)),
+                          SizedBox(height: 5),
+                          Text('Generiere deine Glückszahlen!', style: TextStyle(color: Colors.grey)),
                         ],
                       ),
                     )
@@ -258,11 +228,26 @@ class _LottoHomeScreenState extends State<LottoHomeScreen> {
                         final tip = _myTips[index];
                         return Card(
                           color: const Color(0xFF2D2D2D),
+                          margin: const EdgeInsets.symmetric(vertical: 6),
                           child: ListTile(
-                            leading: CircleAvatar(backgroundColor: Color(0xFFFFD700), child: Text('${index + 1}')),
+                            leading: CircleAvatar(
+                              backgroundColor: const Color(0xFFFFD700),
+                              child: Text('${index + 1}', style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                            ),
                             title: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: tip.map((number) => _buildLottoBall(number, size: 28)).toList(),
+                              children: tip
+                                  .map((number) => _buildLottoBall(number, size: 28))
+                                  .toList(),
+                            ),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () {
+                                setState(() {
+                                  _myTips.removeAt(index);
+                                  _totalCost = _myTips.length * 1.50;
+                                });
+                              },
                             ),
                           ),
                         );
@@ -275,8 +260,8 @@ class _LottoHomeScreenState extends State<LottoHomeScreen> {
       floatingActionButton: _myTips.isNotEmpty
           ? FloatingActionButton(
               onPressed: _clearTips,
-              child: Icon(Icons.delete),
               backgroundColor: Colors.red,
+              child: const Icon(Icons.delete, color: Colors.white),
             )
           : null,
     );
