@@ -1,12 +1,20 @@
 // android/build.gradle
 buildscript {
+<<<<<<< HEAD
     ext.kotlin_version = '2.1.0'
+=======
+    ext.kotlin_version = '1.9.23'
+>>>>>>> 50b04ce00a4a02c1fd9cdd991c1bac95a51007ac
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
+<<<<<<< HEAD
         classpath 'com.android.tools.build:gradle:8.6.0'
+=======
+        classpath 'com.android.tools.build:gradle:8.3.0'
+>>>>>>> 50b04ce00a4a02c1fd9cdd991c1bac95a51007ac
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
