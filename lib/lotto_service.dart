@@ -1,44 +1,53 @@
 import 'dart:math';
 
 class LottoService {
-  final Random _random = Random();
-
-  List<int> generateTip() {
+  static List<int> generateLottoNumbers() {
+    final random = Random();
     final numbers = <int>[];
+    
     while (numbers.length < 6) {
-      final number = _random.nextInt(49) + 1;
+      final number = random.nextInt(49) + 1;
       if (!numbers.contains(number)) {
         numbers.add(number);
       }
     }
+    
     numbers.sort();
     return numbers;
   }
 
-  List<int> generateSuperNumber() {
-    return [_random.nextInt(10)];
+  static double calculateCost(int tipCount, double pricePerTip) {
+    return tipCount * pricePerTip;
   }
 
-  List<List<int>> generateMultipleTips(int count) {
-    return List.generate(count, (index) => generateTip());
+  static List<List<int>> generateMultipleTips(int count) {
+    final tips = <List<int>>[];
+    for (int i = 0; i < count; i++) {
+      tips.add(generateLottoNumbers());
+    }
+    return tips;
   }
 
-  Map<String, dynamic> analyzeTips(List<List<int>> tips) {
-    final numberFrequency = <int, int>{};
-    for (final tip in tips) {
-      for (final number in tip) {
-        numberFrequency[number] = (numberFrequency[number] ?? 0) + 1;
+  static Map<String, dynamic> simulateWinnings(List<List<int>> tips, int simulations) {
+    final random = Random();
+    int wins = 0;
+
+    for (int i = 0; i < simulations; i++) {
+      final winningNumbers = generateLottoNumbers();
+      
+      for (final tip in tips) {
+        final matchingNumbers = tip.where((number) => winningNumbers.contains(number)).length;
+        if (matchingNumbers >= 3) {
+          wins++;
+          break;
+        }
       }
     }
 
-    final sortedNumbers = numberFrequency.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
-
     return {
-      'totalTips': tips.length,
-      'mostFrequent': sortedNumbers.take(6).map((e) => e.key).toList(),
-      'leastFrequent': sortedNumbers.reversed.take(6).map((e) => e.key).toList(),
-      'numberFrequency': numberFrequency,
+      'winningProbability': wins / simulations,
+      'totalWins': wins,
+      'totalSimulations': simulations,
     };
   }
 }
