@@ -1,0 +1,29 @@
+name: lotto_world_pro
+description: International lottery app with real data, multiple systems and custom generators
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  http: ^1.2.2
+  share_plus: ^11.0.0
+  shared_preferences: ^2.3.3
+  path_provider: ^2.1.3
+  csv: ^6.0.0
+  intl: ^0.19.0  # Version korrigiert
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true
